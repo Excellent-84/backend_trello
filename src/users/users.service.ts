@@ -1,74 +1,65 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './users.entity';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { Repository } from 'typeorm';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { UpdateUserDto } from './dto/update-user.dto';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class UsersService {
 
-   constructor(
+  constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>
   ) {}
 
-  async createUser(dto: CreateUserDto) {
-    try {
-      const newUser = this.userRepository.create(dto);
-      await this.userRepository.save(newUser);
-      return newUser;
-    } catch (error) {
-      throw error;
-    }
+  async createUser(dto: CreateUserDto): Promise<User> {
+    const [newUser] = await this.userRepository.query(
+      'INSERT INTO users (email, password) VALUES ($1, $2) RETURNING * ',
+      [dto.email, dto.password]
+    );
+    return newUser;
   }
 
-  async getUsers() {
-    try {
-      const users = await this.userRepository.find();
-      return users;
-    } catch (err) {
-      throw err;
-    }
+  async getUsers(): Promise<User[]> {
+    const users = await this.userRepository.query(
+      'SELECT * FROM users'
+    )
+    return users;
   }
 
-  async getUserById(id: number) {
-    try {
-      const user = await this.userRepository.findOneBy({ id });
-      return user;
-    } catch (err) {
-      throw err;
+  async getUserById(id: number): Promise<User> {
+    const [user] = await this.userRepository.query(
+      'SELECT * FROM users WHERE id = $1', [id]
+    );
+    if (!user) {
+      throw new HttpException('Пользователь не найден', HttpStatus.NOT_FOUND)
     }
+    return user;
   }
 
-   async getUserByEmail(email: string) {
-    try {
-      const user = await this.userRepository.findOneBy({ email });
-      return user;
-    } catch (err) {
-      throw err;
-    }
+  async updateUser(id: number, dto: UpdateUserDto): Promise<User> {
+    await this.getUserById(id);
+    const hashedPassword = await bcrypt.hash(dto.password, 10);
+
+    const [updateUser] = await this.userRepository.query(
+      'UPDATE users SET password = $1 WHERE id = $2 RETURNING * ',
+      [hashedPassword, id]
+    );
+    return updateUser[0];
   }
 
-  async updateUser(id: number, dto: UpdateUserDto) {
-    try {
-      const user = await this.userRepository.findOneBy({ id });
-      if (!user) {
-        return null;
-      }
-      this.userRepository.merge(user, dto);
-      await this.userRepository.save(user);
-      return user;
-    } catch (err) {
-      throw err;
-    }
+  async deleteUser(id: number): Promise<void> {
+    await this.getUserById(id)
+    await this.userRepository.query(
+      'DELETE FROM users WHERE id = $1', [id]
+    );
   }
 
-  async deleteUser(id: number) {
-    try {
-      const result = await this.userRepository.delete(id);
-      return (result.affected ?? 0) > 0;
-    } catch (err) {
-      throw err;
-    }
+  async getUserByEmail(email: string): Promise<User> {
+    const [user] = await this.userRepository.query(
+      'SELECT * FROM users WHERE email = $1', [email]
+    );
+    return user;
   }
 }

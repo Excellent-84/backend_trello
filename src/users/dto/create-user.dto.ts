@@ -13,3 +13,8 @@ export class CreateUserDto {
   @Length(8, 16, { message: 'Не меньше 8 и не больше 16 символов' })
   readonly password: string;
 }
+
+export class TokenResponse {
+  @ApiProperty({ example: 'eyJhbGciOiJIUzI1NiIsInR5c...', description: 'Токен' })
+  token: string;
+}

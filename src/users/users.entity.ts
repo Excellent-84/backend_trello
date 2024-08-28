@@ -1,8 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, JoinColumn } from 'typeorm';
 import { Exclude } from 'class-transformer';
+import { Columns } from 'src/columns/columns.entity';
 
-@Entity()
+@Entity('users')
 export class User {
 
   @ApiProperty({ example: '1', description: 'Уникальный идентификатор' })
@@ -17,4 +18,7 @@ export class User {
   @Exclude()
   @Column('varchar', { length: 255 })
   password!: string;
+
+  @OneToMany(() => Columns, (column) => column.user, { cascade: true })
+  columns: Columns[];
 }
