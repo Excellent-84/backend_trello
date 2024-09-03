@@ -5,6 +5,8 @@ import { UsersModule } from './users/users.module';
 import { User } from './users/users.entity';
 import { ColumnsModule } from './columns/columns.module';
 import { Columns } from './columns/columns.entity';
+import { CardsModule } from './cards/cards.module';
+import { Card } from './cards/cards.entity';
 
 @Module({
   controllers: [],
@@ -20,11 +22,12 @@ import { Columns } from './columns/columns.entity';
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DB,
-      entities: [User, Columns],
+      entities: [User, Columns, Card],
       synchronize: true
     }),
     UsersModule,
-    ColumnsModule
+    ColumnsModule,
+    CardsModule
   ],
 })
 export class AppModule {}

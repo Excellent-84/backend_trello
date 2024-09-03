@@ -4,6 +4,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { User } from './users.entity';
+import { OwnerGuard } from './owner-user.guard';
 
 @ApiTags('Пользователи')
 @UseGuards(JwtAuthGuard)
@@ -21,6 +22,7 @@ export class UsersController {
 
   @ApiOperation({ summary: 'Получить пользователя по id' })
   @ApiResponse({ status: 200, type: User })
+  @UseGuards(OwnerGuard)
   @Get(':id')
   async findOne(@Param('id') id: number): Promise<User> {
     return this.usersService.getUserById(id);
@@ -28,6 +30,7 @@ export class UsersController {
 
   @ApiOperation({ summary: 'Обновить пользователя' })
   @ApiResponse({ status: 200, type: User })
+  @UseGuards(OwnerGuard)
   @Put(':id')
   async update(@Param('id') id: number, @Body() dto: UpdateUserDto): Promise<User> {
     return this.usersService.updateUser(id, dto);
@@ -35,6 +38,7 @@ export class UsersController {
 
   @ApiOperation({ summary: 'Удалить пользователя' })
   @HttpCode(204)
+  @UseGuards(OwnerGuard)
   @Delete(':id')
   async delete(@Param('id') id: number): Promise<void> {
     return this.usersService.deleteUser(id);

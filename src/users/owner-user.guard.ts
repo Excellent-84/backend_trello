@@ -1,42 +1,53 @@
-import { CanActivate, ExecutionContext, HttpException, HttpStatus, Injectable } from "@nestjs/common";
-import { Reflector } from "@nestjs/core";
-import { Columns } from "../columns/columns.entity";
+import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from "@nestjs/common";
+import { ColumnsService } from "../columns/columns.service";
+import { UsersService } from "./users.service";
 
 @Injectable()
 export class OwnerGuard implements CanActivate {
-  constructor(private reflector: Reflector) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly columnsService: ColumnsService,
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-    const user = request.user;
-    const entity = await this.getEntity(request);
-    console.log('entity:', entity)
+    const userId = request.user.id;
+    const params = request.params;
+    // const columnId = +request.params.id;
+    const pathId = +request.params.id
+    const pathUserId = +request.params.userId;
 
-    if (!entity) {
-      throw new HttpException('Сущность не найдена', HttpStatus.NOT_FOUND);
+    // console.log('request.headers: ', request.route.path.split('/').pop());
+    console.log('params: ', params);
+    console.log('pathId: ', pathId);
+    console.log('pathUserId: ', pathUserId);
+    console.log('userId: ', userId);
+
+    if (pathId && pathUserId) {
+      const column = await this.columnsService.getColumnById(pathId);
+      console.log('column: ', column);
+      if (column.user.id !== pathUserId) {
+        throw new ForbiddenException('У вас нет доступа к этой колонке');
+      }
     }
 
-    if (entity.user.id === user.id) {
-      return true;
+    else if (pathId || pathUserId) {
+      if (pathId) {
+        const user = await this.usersService.getUserById(pathId);
+        console.log('user: ', user);
+        if (user.id !== userId) {
+          throw new ForbiddenException('У вас нет доступа к этому пользователю');
+        }
+      }
+      else {
+        const user = await this.usersService.getUserById(pathUserId);
+        console.log('user: ', user);
+        if (user.id !== userId) {
+          throw new ForbiddenException('У вас нет доступа к этому пользователю');
+        }
+      }
     }
 
-    throw new HttpException('Нет доступа', HttpStatus.FORBIDDEN);
-  }
-
-  // private async getEntity(request: any): Promise<Columns | Card | Comment | null> {
-  private async getEntity(request: any): Promise<Columns | null> {
-    const entityType = this.reflector.get<string>('entity', request.route.path);
-    console.log('entityType:', entityType)
-
-    switch (entityType) {
-      case 'columns':
-        return await request.service.getColumnById(request.params.id);
-      // case 'cards':
-      //   return await request.service.getCardById(request.params.id);
-      // case 'comments':
-      //   return await request.service.getCommentById(request.params.id);
-      default:
-        return null;
-    }
+    return true;
   }
 }

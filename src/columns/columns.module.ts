@@ -5,18 +5,19 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../users/users.entity';
 import { Columns } from './columns.entity';
 import { AuthModule } from '../auth/auth.module';
-import { UsersService } from 'src/users/users.service';
+import { UsersService } from '../users/users.service';
+import { Card } from '../cards/cards.entity';
+import { CardsService } from '../cards/cards.service';
 
 @Module({
-  providers: [ColumnsService, UsersService],
+  providers: [ColumnsService, UsersService, CardsService],
   controllers: [ColumnsController],
   imports: [
-    TypeOrmModule.forFeature([User, Columns]),
+    TypeOrmModule.forFeature([User, Columns, Card]),
     forwardRef(() => AuthModule)
   ],
   exports: [
-    ColumnsService,
-    UsersService
+    ColumnsService
   ]
 })
 export class ColumnsModule {}

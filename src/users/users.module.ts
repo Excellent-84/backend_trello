@@ -6,17 +6,18 @@ import { User } from './users.entity';
 import { AuthModule } from '../auth/auth.module';
 import { Columns } from '../columns/columns.entity';
 import { ColumnsService } from '../columns/columns.service';
+import { Card } from '../cards/cards.entity';
+import { CardsService } from '../cards/cards.service';
 
 @Module({
   controllers: [UsersController],
-  providers: [UsersService, ColumnsService],
+  providers: [UsersService, ColumnsService, CardsService],
   imports: [
-    TypeOrmModule.forFeature([User, Columns]),
+    TypeOrmModule.forFeature([User, Columns, Card]),
     forwardRef(() => AuthModule)
   ],
   exports: [
-    UsersService,
-    ColumnsService
+    UsersService
   ]
 })
 export class UsersModule {}
