@@ -10,7 +10,7 @@ import { ColumnGuard } from '../guards/column.guard';
 import { CardGuard } from '../guards/card.guard';
 
 @ApiTags('Карточки')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, UserGuard, ColumnGuard)
 @Controller('users/:userId/columns/:columnId/cards')
 export class CardsController {
 
@@ -18,7 +18,6 @@ export class CardsController {
 
 	@ApiOperation({ summary: 'Создать новую карточку' })
   @ApiResponse({ status: 201, type: Card })
-  @UseGuards(UserGuard, ColumnGuard)
   @Post()
   async create(@Param('columnId') columnId: number, @Body() dto: CreateCardDto): Promise<Card> {
     return this.cardsService.createCard(dto, columnId);
@@ -26,7 +25,6 @@ export class CardsController {
 
   @ApiOperation({ summary: 'Получить все карточки' })
   @ApiResponse({ status: 200, type: [Card] })
-  @UseGuards(UserGuard, ColumnGuard)
   @Get()
   async findAll(@Param('columnId') columnId: number): Promise<Card[]> {
     return this.cardsService.getCards(columnId);
@@ -34,7 +32,7 @@ export class CardsController {
 
   @ApiOperation({ summary: 'Получить карточку по id' })
   @ApiResponse({ status: 200, type: Card })
-  @UseGuards(UserGuard, ColumnGuard, CardGuard)
+  @UseGuards(CardGuard)
   @Get(':id')
   async findOne(@Param('id') id: number): Promise<Card> {
     return this.cardsService.getCardById(id);
@@ -42,7 +40,7 @@ export class CardsController {
 
   @ApiOperation({ summary: 'Обновить карточку' })
   @ApiResponse({ status: 200, type: Card })
-  @UseGuards(UserGuard, ColumnGuard, CardGuard)
+  @UseGuards(CardGuard)
   @Put(':id')
   async update(@Param('id') id: number, @Body() dto: UpdateCardDto): Promise<Card> {
     return this.cardsService.updateCard(id, dto);
@@ -50,7 +48,7 @@ export class CardsController {
 
   @ApiOperation({ summary: 'Удалить карточку' })
   @HttpCode(204)
-  @UseGuards(UserGuard, ColumnGuard, CardGuard)
+  @UseGuards(CardGuard)
   @Delete(':id')
   async delete(@Param('id') id: number): Promise<void> {
     return this.cardsService.deleteCard(id);

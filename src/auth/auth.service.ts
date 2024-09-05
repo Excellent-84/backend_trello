@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { CreateUserDto, TokenResponse } from '../users/dto/create-user.dto';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
@@ -8,8 +8,10 @@ import * as bcrypt from 'bcryptjs';
 @Injectable()
 export class AuthService {
 
-  constructor(private readonly userService: UsersService,
-              private readonly jwtService: JwtService) {}
+  constructor(
+    private readonly userService: UsersService,
+    private readonly jwtService: JwtService
+  ) {}
 
   async login(userDto: CreateUserDto): Promise<TokenResponse> {
     const user = await this.validateUser(userDto);
@@ -20,15 +22,11 @@ export class AuthService {
     const condidate = await this.userService.getUserByEmail(userDto.email);
 
     if (condidate) {
-      throw new HttpException(
-        'Пользователь с таким email уже существует',
-        HttpStatus.BAD_REQUEST
-      )
+      throw new BadRequestException('Пользователь с таким email уже существует')
     }
 
     const hashPassword = await bcrypt.hash(userDto.password, 10);
-    const user = await this.userService.createUser({ ...userDto, password: hashPassword });
-    return user;
+    return await this.userService.createUser({ ...userDto, password: hashPassword });
   }
 
   private async generateToken(user: User) {
@@ -40,10 +38,7 @@ export class AuthService {
     const user = await this.userService.getUserByEmail(userDto.email);
 
     if (!user) {
-      throw new HttpException(
-        'Некорректный email',
-        HttpStatus.BAD_REQUEST
-      )
+      throw new BadRequestException('Некорректный email')
     }
 
     const passwordEquals = await bcrypt.compare(userDto.password, user.password);

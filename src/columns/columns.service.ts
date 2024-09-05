@@ -3,6 +3,7 @@ import { Columns } from './columns.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateColumnDto } from './dto/create-column.dto';
+import { UpdateColumnDto } from './dto/update-column.dto';
 
 @Injectable()
 export class ColumnsService {
@@ -40,7 +41,7 @@ export class ColumnsService {
     return {...column, user: { id: column.userId }};
   }
 
-  async updateColumn(id: number, dto: CreateColumnDto): Promise<Columns> {
+  async updateColumn(id: number, dto: UpdateColumnDto): Promise<Columns> {
     await this.getColumnById(id);
 
     const [updateColumn] = await this.columnRepository.query(

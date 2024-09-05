@@ -19,7 +19,6 @@ export class ColumnGuard implements CanActivate {
         throw new ForbiddenException('У вас нет доступа к этой колонке');
       }
     }
-
     return true;
   }
 }

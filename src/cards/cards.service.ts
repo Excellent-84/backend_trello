@@ -41,7 +41,11 @@ export class CardsService {
       throw new NotFoundException('Карточка не найдена');
     }
 
-    return { ...card, column: { id: card.columnId, user: { id: card.userId } } };
+    return { ...card,
+      column: { id: card.columnId,
+        user: { id: card.userId }
+      }
+    };
   }
 
   async updateCard(id: number, dto: UpdateCardDto): Promise<Card> {
