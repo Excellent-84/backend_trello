@@ -1,7 +1,7 @@
 import { User } from './users.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { Repository } from 'typeorm';
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcryptjs';
@@ -32,9 +32,11 @@ export class UsersService {
     const [user] = await this.userRepository.query(
       'SELECT * FROM users WHERE id = $1', [id]
     );
+
     if (!user) {
-      throw new HttpException('Пользователь не найден', HttpStatus.NOT_FOUND)
+      throw new NotFoundException('Пользователь не найден')
     }
+
     return user;
   }
 

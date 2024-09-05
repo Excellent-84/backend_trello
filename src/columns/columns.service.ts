@@ -29,14 +29,15 @@ export class ColumnsService {
 
   async getColumnById(id: number): Promise<Columns> {
     const [column] = await this.columnRepository.query(
-      `SELECT * FROM columns WHERE id = ${id}`
+      `SELECT * FROM columns WHERE id = $1`,
+      [id]
     );
 
     if (!column) {
       throw new NotFoundException('Колонка не найдена');
     }
 
-    return {...column, user: { id: column.userId }}
+    return {...column, user: { id: column.userId }};
   }
 
   async updateColumn(id: number, dto: CreateColumnDto): Promise<Columns> {

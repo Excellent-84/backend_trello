@@ -12,7 +12,7 @@ export class CardsService {
     @InjectRepository(Card) private readonly cardsRepository: Repository<Card>
   ) {}
 
-  async createCard(columnId: number, dto: CreateCardDto): Promise<Card> {
+  async createCard(dto: CreateCardDto, columnId: number): Promise<Card> {
     const [newCard] = await this.cardsRepository.query(
       `INSERT INTO cards (title, description, "columnId") VALUES ($1, $2, $3) RETURNING * `,
       [dto.title, dto.description, columnId]
@@ -25,19 +25,23 @@ export class CardsService {
       `SELECT * FROM cards WHERE "columnId" = $1`,
       [columnId]
     )
-    return cards.map(card => ({ ...card, user: { id: card.columnId } }));
+    return cards.map(card => ({ ...card, column: { id: card.columnId } }));
   }
 
   async getCardById(id: number): Promise<Card> {
     const [card] = await this.cardsRepository.query(
-      `SELECT * FROM cards WHERE id = ${id}`
+      `SELECT c.*, col."userId"
+       FROM cards c
+       JOIN columns col ON c."columnId" = col.id
+       WHERE c.id = $1`,
+      [id]
     );
 
     if (!card) {
       throw new NotFoundException('Карточка не найдена');
     }
 
-    return {...card, column: { id: card.columnId }}
+    return { ...card, column: { id: card.columnId, user: { id: card.userId } } };
   }
 
   async updateCard(id: number, dto: UpdateCardDto): Promise<Card> {
