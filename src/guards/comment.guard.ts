@@ -7,9 +7,9 @@ export class CommentGuard implements CanActivate {
   constructor(private readonly commentsService: CommentsService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest();
-    const userId = request.user.id;
-    const pathId = +request.params.id;
+    const req = context.switchToHttp().getRequest();
+    const userId = req.user.id;
+    const pathId = +req.params.id;
 
     if (pathId) {
       const comment = await this.commentsService.getCommentById(pathId);

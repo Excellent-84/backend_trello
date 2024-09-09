@@ -7,10 +7,10 @@ export class UserGuard implements CanActivate {
   constructor(private readonly usersService: UsersService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest();
-    const userId = request.user.id;
-    const pathId = +request.params.id;
-    const pathUserId = +request.params.userId;
+    const req = context.switchToHttp().getRequest();
+    const userId = req.user.id;
+    const pathId = +req.params.id;
+    const pathUserId = +req.params.userId;
 
     if (pathUserId || pathId) {
       const user = await this.usersService.getUserById(pathUserId || pathId);

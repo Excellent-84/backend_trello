@@ -7,10 +7,10 @@ export class ColumnGuard implements CanActivate {
   constructor(private readonly columnsService: ColumnsService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest();
-    const userId = request.user.id;
-    const pathId = +request.params.id
-    const pathColumnId = +request.params.columnId
+    const req = context.switchToHttp().getRequest();
+    const userId = req.user.id;
+    const pathId = +req.params.id
+    const pathColumnId = +req.params.columnId
 
     if  (pathColumnId || pathId) {
       const column = await this.columnsService.getColumnById(pathColumnId || pathId);

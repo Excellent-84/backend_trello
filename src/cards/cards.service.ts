@@ -30,10 +30,11 @@ export class CardsService {
 
   async getCardById(id: number): Promise<Card> {
     const [card] = await this.cardsRepository.query(
-      `SELECT c.*, col."userId"
-       FROM cards c
-       JOIN columns col ON c."columnId" = col.id
-       WHERE c.id = $1`,
+      `SELECT car.*,
+              col."userId"
+      FROM cards car
+      JOIN columns col ON car."columnId" = col.id
+      WHERE c.id = $1`,
       [id]
     );
 

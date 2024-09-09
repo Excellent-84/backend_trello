@@ -7,10 +7,10 @@ export class CardGuard implements CanActivate {
   constructor(private readonly cardsService: CardsService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest();
-    const userId = request.user.id;
-    const pathId = +request.params.id;
-    const pathCardId = +request.params.cardId
+    const req = context.switchToHttp().getRequest();
+    const userId = req.user.id;
+    const pathId = +req.params.id;
+    const pathCardId = +req.params.cardId
 
     if  (pathCardId || pathId) {
       const card = await this.cardsService.getCardById(pathCardId || pathId);

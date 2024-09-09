@@ -30,11 +30,13 @@ export class CommentsService {
 
   async getCommentById(id: number): Promise<Comment> {
     const [comment] = await this.commentsRepository.query(
-      `SELECT com.*, car."columnId", col."userId"
-       FROM comments com
-       JOIN cards car ON com."cardId" = car.id
-       JOIN columns col ON car."columnId" = col.id
-       WHERE com.id = $1`,
+      `SELECT com.*,
+              car."columnId",
+              col."userId"
+      FROM comments com
+      JOIN cards car ON com."cardId" = car.id
+      JOIN columns col ON car."columnId" = col.id
+      WHERE com.id = $1`,
       [id]
     );
 

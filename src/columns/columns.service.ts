@@ -22,10 +22,31 @@ export class ColumnsService {
 
   async getColumns(userId: number): Promise<Columns[]> {
     const columns = await this.columnRepository.query(
-      `SELECT * FROM columns WHERE "userId" = $1`,
+      `SELECT col.id AS column_id,
+              col.title AS column_title,
+              col."userId" AS user_id,
+              car.id AS card_id,
+              car.title AS card_title,
+              COUNT(com.id) AS comment_count
+      FROM columns col
+      JOIN cards car ON car."columnId" = col.id
+      LEFT JOIN comments com ON com."cardId" = car.id
+      WHERE col."userId" = $1
+      GROUP BY col.id, car.id
+      ORDER BY col.id, car.id`,
       [userId]
-    )
-    return columns.map(column => ({ ...column, user: { id: column.userId } }));
+    );
+
+    return columns.map(column => ({
+      id: column.column_id,
+      title: column.column_title,
+      user: { id: column.user_id },
+      cards: [{
+        id: column.card_id,
+        title: column.card_title,
+        commentCount: column.comment_count
+      }]
+    }));
   }
 
   async getColumnById(id: number): Promise<Columns> {
