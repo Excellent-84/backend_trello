@@ -2,7 +2,7 @@ import { forwardRef, Module } from '@nestjs/common';
 import { CardsService } from './cards.service';
 import { CardsController } from './cards.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Columns } from '../columns/columns.entity';
+import { ColumnName } from '../columns/columns.entity';
 import { Comment } from '../comments/comments.entity';
 import { Card } from './cards.entity';
 import { AuthModule } from '../auth/auth.module';
@@ -15,7 +15,7 @@ import { CommentsService } from '../comments/comments.service';
   providers: [CardsService, ColumnsService, UsersService, CommentsService],
   controllers: [CardsController],
   imports: [
-    TypeOrmModule.forFeature([User, Columns, Card, Comment]),
+    TypeOrmModule.forFeature([User, ColumnName, Card, Comment]),
     forwardRef(() => AuthModule)
   ],
   exports: [

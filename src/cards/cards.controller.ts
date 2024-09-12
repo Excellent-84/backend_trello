@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, ParseIntPipe, Post, Put, UseGuards, UsePipes } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CardsService } from './cards.service';
@@ -11,6 +11,7 @@ import { CardGuard } from '../guards/card.guard';
 
 @ApiTags('Карточки')
 @UseGuards(JwtAuthGuard, UserGuard, ColumnGuard)
+@UsePipes(ParseIntPipe)
 @Controller('users/:userId/columns/:columnId/cards')
 export class CardsController {
 

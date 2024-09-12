@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Columns } from './columns.entity';
+import { ColumnName } from './columns.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateColumnDto } from './dto/create-column.dto';
@@ -9,10 +9,10 @@ import { UpdateColumnDto } from './dto/update-column.dto';
 export class ColumnsService {
 
   constructor(
-    @InjectRepository(Columns) private readonly columnRepository: Repository<Columns>
+    @InjectRepository(ColumnName) private readonly columnRepository: Repository<ColumnName>
   ) {}
 
-  async createColumn(userId: number, dto: CreateColumnDto): Promise<Columns> {
+  async createColumn(userId: number, dto: CreateColumnDto): Promise<ColumnName> {
     const [newColumn] = await this.columnRepository.query(
       `INSERT INTO columns (title, "userId") VALUES ($1, $2) RETURNING * `,
       [dto.title, userId]
@@ -20,7 +20,7 @@ export class ColumnsService {
     return newColumn;
   }
 
-  async getColumns(userId: number): Promise<Columns[]> {
+  async getColumns(userId: number): Promise<ColumnName[]> {
     const columns = await this.columnRepository.query(
       `SELECT col.id AS column_id,
               col.title AS column_title,
@@ -49,7 +49,7 @@ export class ColumnsService {
     }));
   }
 
-  async getColumnById(id: number): Promise<Columns> {
+  async getColumnById(id: number): Promise<ColumnName> {
     const [column] = await this.columnRepository.query(
       `SELECT * FROM columns WHERE id = $1`,
       [id]
@@ -62,7 +62,7 @@ export class ColumnsService {
     return {...column, user: { id: column.userId }};
   }
 
-  async updateColumn(id: number, dto: UpdateColumnDto): Promise<Columns> {
+  async updateColumn(id: number, dto: UpdateColumnDto): Promise<ColumnName> {
     await this.getColumnById(id);
 
     const [updateColumn] = await this.columnRepository.query(

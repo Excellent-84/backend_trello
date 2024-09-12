@@ -34,7 +34,7 @@ export class CardsService {
               col."userId"
       FROM cards car
       JOIN columns col ON car."columnId" = col.id
-      WHERE c.id = $1`,
+      WHERE car.id = $1`,
       [id]
     );
 

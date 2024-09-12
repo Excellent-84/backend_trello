@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Columns } from "../columns/columns.entity";
+import { ColumnName } from "../columns/columns.entity";
 import { Comment } from "../comments/comments.entity";
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
@@ -18,8 +18,8 @@ export class Card {
   @Column('varchar', { nullable: true, length: 255 })
   description?: string;
 
-  @ManyToOne(() => Columns, (column) => column.cards, { onDelete: 'CASCADE' })
-  column: Columns;
+  @ManyToOne(() => ColumnName, (column) => column.cards, { onDelete: 'CASCADE' })
+  column: ColumnName;
 
   @OneToMany(() => Comment, (comment) => comment.card, { cascade: true })
   comments: Comment[];

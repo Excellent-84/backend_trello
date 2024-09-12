@@ -4,7 +4,7 @@ import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "ty
 import { Card } from "../cards/cards.entity";
 
 @Entity('columns')
-export class Columns {
+export class ColumnName {
 
   @ApiProperty({ example: '1', description: 'Уникальный идентификатор' })
   @PrimaryGeneratedColumn()

@@ -4,7 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { User } from './users/users.entity';
 import { ColumnsModule } from './columns/columns.module';
-import { Columns } from './columns/columns.entity';
+import { ColumnName } from './columns/columns.entity';
 import { Comment } from './comments/comments.entity';
 import { CardsModule } from './cards/cards.module';
 import { Card } from './cards/cards.entity';
@@ -24,7 +24,7 @@ import { CommentsModule } from './comments/comments.module';
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DB,
-      entities: [User, Columns, Card, Comment],
+      entities: [User, ColumnName, Card, Comment],
       synchronize: true
     }),
     UsersModule,

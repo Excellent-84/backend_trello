@@ -1,4 +1,4 @@
-import { Controller, Get, Put, Delete, Param, Body, UseGuards, HttpCode } from '@nestjs/common';
+import { Controller, Get, Put, Delete, Param, Body, UseGuards, HttpCode, UsePipes, ParseIntPipe } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -8,6 +8,7 @@ import { UserGuard } from '../guards/user.guard';
 
 @ApiTags('Пользователи')
 @UseGuards(JwtAuthGuard)
+@UsePipes(ParseIntPipe)
 @Controller('users')
 export class UsersController {
 

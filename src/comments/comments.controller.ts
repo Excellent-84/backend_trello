@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, ParseIntPipe, Post, Put, UseGuards, UsePipes } from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UserGuard } from '../guards/user.guard';
@@ -12,6 +12,7 @@ import { CommentGuard } from '../guards/comment.guard';
 
 @ApiTags('Комментарии')
 @UseGuards(JwtAuthGuard, UserGuard, ColumnGuard, CardGuard)
+@UsePipes(ParseIntPipe)
 @Controller('users/:userId/columns/:columnId/cards/:cardId/comments')
 export class CommentsController {
 
